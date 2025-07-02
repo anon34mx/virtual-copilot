@@ -1,0 +1,36 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\aaron\\Documents\\git\\virtual-copilot\\source\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{5DDDD979-7911-4E6E-877D-4674E3DD7E62}|Funbit.Ets.Telemetry.Server\\Funbit.Ets.Telemetry.Server.csproj|c:\\users\\aaron\\documents\\git\\virtual-copilot\\source\\funbit.ets.telemetry.server\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{5DDDD979-7911-4E6E-877D-4674E3DD7E62}|Funbit.Ets.Telemetry.Server\\Funbit.Ets.Telemetry.Server.csproj|solutionrelative:funbit.ets.telemetry.server\\mainform.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 140,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "MainForm.cs [Dise\u00F1o]",
+              "DocumentMoniker": "C:\\Users\\aaron\\Documents\\git\\virtual-copilot\\source\\Funbit.Ets.Telemetry.Server\\MainForm.cs",
+              "RelativeDocumentMoniker": "Funbit.Ets.Telemetry.Server\\MainForm.cs",
+              "ToolTip": "C:\\Users\\aaron\\Documents\\git\\virtual-copilot\\source\\Funbit.Ets.Telemetry.Server\\MainForm.cs [Dise\u00F1o]",
+              "RelativeToolTip": "Funbit.Ets.Telemetry.Server\\MainForm.cs [Dise\u00F1o]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-02T19:42:48.041Z",
+              "EditorCaption": " [Dise\u00F1o]"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
