@@ -11,3 +11,4 @@
 *.log
 /_WorkingFiles
 source/.vs/Funbit.Ets.Telemetry/v14/*
+/ESP32-8040S043/libraries
