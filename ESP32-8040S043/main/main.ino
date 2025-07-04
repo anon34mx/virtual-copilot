@@ -27,15 +27,16 @@
 */
 
 #pragma GCC optimize ("Ofast")
-#include "ArduinoJson.h"
 
 // DISPLAY
 #include <LovyanGFX.hpp>
 #include <lgfx_user/LGFX_ESP32S3_RGB_ESP32-8048S043.h>
+#include <LGFXMeter.h>
 #define LGFX_USE_V1
 LGFX tft;
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 480
+
 
 //  TOUCH
 #include "TAMC_GT911.h"
@@ -48,12 +49,16 @@ LGFX tft;
 
 TAMC_GT911 tp = TAMC_GT911(TOUCH_SDA, TOUCH_SCL, TOUCH_INT, TOUCH_RST, TOUCH_WIDTH, TOUCH_HEIGHT);
 
+#include "ArduinoJson.h"
 JsonDocument doc;
-String currentDisplay="";
 
 String serialString;
 byte serialInBuffer[0];
 int incomingByte = 0;
+
+// virtual copilot
+String currentDisplay="";
+
 
 void setup(void){
   Serial.begin(115200);
