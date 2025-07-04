@@ -25,15 +25,13 @@
   //  PSRAM            : "OPI PSRAM"
   //=====================================================================
 */
-
 #pragma GCC optimize ("Ofast")
-
 // DISPLAY
 #include <LovyanGFX.hpp>
 #include <lgfx_user/LGFX_ESP32S3_RGB_ESP32-8048S043.h>
-#include <LGFXMeter.h>
 #define LGFX_USE_V1
-LGFX tft;
+static LGFX tft;
+#include "lvgl.h"
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 480
 
@@ -72,29 +70,15 @@ void setup(void){
   tp.begin();
   tp.setRotation(ROTATION_INVERTED); // ROTATION_NORMAL|ROTATION_LEFT|ROTATION_INVERTED|ROTATION_RIGHT
 
-  tft.fillRect(10,10,34,34, TFT_RED);
+  // tft.fillRect(10,10,34,34, TFT_RED);
+  
+  lv_timer_handler();
+  dashboard1();
 }
-
 
 void loop(){
   // readSerial();
 }
-// Read the touchpad
-// void my_touchpad_read( lv_indev_drv_t * indev_driver, lv_indev_data_t * data )
-// {
-//   tp.read();
-//   bool touched = tp.isTouched;
-//   if( !touched ){
-//       data->state = LV_INDEV_STATE_REL;
-//   }
-//   else
-//   {
-//     data->state = LV_INDEV_STATE_PR;
-//     /*Set the coordinates*/
-//     data->point.x = tp.points[0].x*8.5;
-//     data->point.y = tp.points[0].y*1.75;
-//   }
-// }
 
 void readSerial(){
   if (Serial.available() > 0) {
