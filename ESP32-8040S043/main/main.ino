@@ -25,23 +25,24 @@
   //  PSRAM            : "OPI PSRAM"
   //=====================================================================
 */
-
+#include <Arduino.h>
 #pragma GCC optimize("Ofast")  //idk
 #define LGFX_USE_V1
 #define ARDUINOIDE 1
 
 #include <lvgl.h>
 
-#if LV_USE_TFT_ESPI
-#include <TFT_eSPI.h>
-#endif
-// #include <LovyanGFX.hpp>                                // for physical display
-// #include <lgfx_user/LGFX_ESP32S3_RGB_ESP32-8048S043.h>  // for exact board config
+// #if LV_USE_TFT_ESPI
+// #include <TFT_eSPI.h>
+// #endif
+#include <LovyanGFX.hpp>                                // for physical display
+#include <lgfx_user/LGFX_ESP32S3_RGB_ESP32-8048S043.h>  // for exact board config
 #include "TAMC_GT911.h"
 
 static std::uint32_t sec, psec;
 static std::uint32_t fps = 0, frame_count = 0;
 LGFX tft;
+// TFT_eSPI tft = TFT_eSPI();
 
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 480
@@ -61,37 +62,23 @@ static uint16_t* buf_2 = (uint16_t*)heap_caps_aligned_alloc(32, (SCREEN_WIDTH * 
 
 TAMC_GT911 tp = TAMC_GT911(TOUCH_SDA, TOUCH_SCL, TOUCH_INT, TOUCH_RST, TOUCH_WIDTH, TOUCH_HEIGHT);
 
-/* Display flushing */
-void my_flush_cb(lv_display_t * display, const lv_area_t * area, uint8_t * px_map)
-{
-    /*The most simple case (but also the slowest) to put all pixels to the screen one-by-one
-     *`put_px` is just an example, it needs to be implemented by you.*/
-    // uint16_t * buf16 = (uint16_t *)px_map; /*Let's say it's a 16 bit (RGB565) display*/
-    // int32_t x, y;
-    // for(y = area->y1; y <= area->y2; y++) {
-    //     for(x = area->x1; x <= area->x2; x++) {
-    //         // put_px(x, y, *buf16);
-    //         tft.drawPixel(x, y, *buf16);
-    //         buf16++;
-    //     }
-    // }
-    // /* IMPORTANT!!!
-    //  * Inform LVGL that you are ready with the flushing and buf is not used anymore*/
-    // lv_display_flush_ready(display);
-}
-/*
-void my_flush_cb(lv_display_t* display, const lv_area_t* area, lv_color_t* color_p) {
-  uint32_t w = (area->x2 - area->x1 + 1);
-  uint32_t h = (area->y2 - area->y1 + 1);
+void my_disp_flush(lv_display_t* display, const lv_area_t* area, unsigned char* data) {
+  uint32_t w = lv_area_get_width(area);
+  uint32_t h = lv_area_get_height(area);
+  lv_draw_sw_rgb565_swap(data, w*h);
+  if (tft.getStartCount() == 0) {   // Processing if not yet started
+    
+    tft.startWrite();
+  }
+  tft.pushImageDMA( area->x1
+                , area->y1
+                , area->x2 - area->x1 + 1
+                , area->y2 - area->y1 + 1
+                ,(uint16_t*) data); 
 
-  tft.startWrite();
-  tft.setAddrWindow(area->x1, area->y1, w, h);
-  tft.writePixels((lgfx::rgb565_t*)&color_p->full, w * h);
-  tft.endWrite();
-
-  lv_disp_flush_ready(disp);
+  lv_display_flush_ready(display);
 }
-*/
+
 
 void setup(void) {
   Serial.begin(115200);
@@ -109,7 +96,7 @@ void setup(void) {
 
   /*Change the following line to your display resolution*/
   lv_display_set_resolution(display, SCREEN_WIDTH, SCREEN_HEIGHT);
-  lv_display_set_flush_cb(display, my_flush_cb);
+  lv_display_set_flush_cb(display, my_disp_flush);
 
   // disp_drv.direct_mode = 0;
   // disp_drv.full_refresh = 0;
