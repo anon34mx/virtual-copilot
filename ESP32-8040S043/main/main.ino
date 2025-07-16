@@ -67,9 +67,7 @@ const uint16_t bitmap_cursor [] PROGMEM = {
 	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
 };
 
-static LGFX_Sprite canvas(&lcd);
-static LGFX_Sprite base(&canvas);
-
+static LGFX_Sprite canvas(&tft);
 
 void setup(void) {
   Serial.begin(115200);
@@ -102,28 +100,25 @@ void setup(void) {
     Serial.println("UNKNOWN");
   }
 
-	canvas.createSprite(100, 100);
-	base  .createSprite(20, 20);
+	canvas.createSprite(800, 480);
+  canvas.fillRect(tX-17,ltY-17,34,34, TFT_RED);
 }
-
+int xrec=0,yrec=0;
 void loop(){
   touched = tft.getTouch( &tX, &tY);
   if (touched) {
     Serial.printf("%d,%d\n", tX, tY);
 
     if(ltX!=tX || ltY!=tY){
-      tft.startWrite();
-      // tft.pushImage(tX-10,tY-10,20,20,bitmap_bg);
-      // tft.fillRect(ltX-10,ltY-10,20,20, TFT_BLACK);
-      tft.fillRect(ltX-17,ltY-17,34,34, TFT_BLACK);
-      // tft.drawBitmap(ltX-10,ltY-10,bitmap_cursor,20,20,TFT_RED,TFT_BLUE);
       tft.fillRect(tX-17,ltY-17,34,34, TFT_TRANSPARENT);
       tft.pushImage(tX-10,tY-10,20,20,bitmap_cursor);
-      // delay(5);
-      tft.endWrite();
       ltX=tX;
       ltY=tY;
     }
   }
-  
+  tft.fillRect(xrec,yrec,34,34, TFT_RED);
+  xrec++;
+  if(xrec>400){
+    xrec=0;
+  }
 }
