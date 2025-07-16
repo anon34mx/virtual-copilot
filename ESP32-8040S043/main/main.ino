@@ -67,7 +67,8 @@ const uint16_t bitmap_cursor [] PROGMEM = {
 	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
 };
 
-static LGFX_Sprite sprite(&tft);
+static LGFX_Sprite canvas(&lcd);
+static LGFX_Sprite base(&canvas);
 
 
 void setup(void) {
@@ -101,9 +102,8 @@ void setup(void) {
     Serial.println("UNKNOWN");
   }
 
-	sprite.createSprite(20, 20);
-	sprite.fillCircle(32, 32, 22, 2);
-	sprite.pushSprite(0,0);
+	canvas.createSprite(100, 100);
+	base  .createSprite(20, 20);
 }
 
 void loop(){
