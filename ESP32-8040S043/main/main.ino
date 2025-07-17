@@ -74,6 +74,12 @@ static LGFX_Sprite canvas(&tft);
 float cX=0, cY=0, cAcc=0.03, cVel=0;
 // float lcX=0, lcY=0;
 
+// images/bliss.bmp - 24bit
+// images/arrow.png
+// images/fondo.jpg
+File bgImage;
+static LGFX_Sprite background(&tft);
+
 void setup(void) {
   Serial.begin(115200);
 
@@ -109,6 +115,18 @@ void setup(void) {
 
 	canvas.createSprite(20, 20);
   canvas.setPaletteColor(1, TFT_RED);
+
+  if(SD.exists("/images/bliss.bmp")){
+    Serial.println("image found");
+    bgImage = SD.open("images/bliss.bmp",FILE_READ);
+    while (bgImage.available()) {
+      Serial.write(bgImage.read());
+    }
+    // close the file:
+    bgImage.close();
+  }else{
+    Serial.println("no image");
+  }
 }
 
 
@@ -120,8 +138,7 @@ void loop(){
   touched = tft.getTouch( &tX, &tY);
   if (touched) {
     if(ltX!=tX || ltY!=tY){
-
-      canvas.fillRect(0, 0, 22, 22, TFT_RED);
+      tft.fillRect(ltX, ltY, 22, 22, TFT_RED);
       canvas.pushImage(0, 0, 20, 20, bitmap_cursor);
 
       Serial.printf("%d, %d, %d, %d, %d\n", deltaTime, tX, tY, ltX, ltY);
@@ -130,13 +147,7 @@ void loop(){
       ltY=tY;
     }
   }
-  
   canvas.pushSprite(ltX, ltY);
-  // canvas.fillScreen(TFT_BLACK);           // Limpia el canvas
-  // canvas.drawCircle(100, 100, 50, TFT_RED); // Dibuja un círculo rojo
-  // canvas.drawString("¡Hola, Aarón!", 120, 180); // Texto en pantalla
-  
-  // delay(10);
   xrec++;
   if(xrec>400){
     xrec=0;
