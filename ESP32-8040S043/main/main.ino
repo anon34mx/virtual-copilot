@@ -27,11 +27,11 @@
   //=====================================================================
 */
 #include <Arduino.h>
+#include <FS.h>
+#include <SD.h>
 #include <LovyanGFX.hpp>
 #include <lgfx_user/LGFX_ESP32S3_RGB_ESP32-8048S043.h>
 #include "TAMC_GT911.h"
-#include <FS.h>
-#include <SD.h>
 
 LGFX tft;
 bool touched; // max  478,270
@@ -67,7 +67,12 @@ const uint16_t bitmap_cursor [] PROGMEM = {
 	0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
 };
 
+uint8_t deltaTime=0;
+double currentTime=0;
+int xrec=0,yrec=0;
 static LGFX_Sprite canvas(&tft);
+float cX=0, cY=0, cAcc=0.03, cVel=0;
+// float lcX=0, lcY=0;
 
 void setup(void) {
   Serial.begin(115200);
@@ -78,6 +83,8 @@ void setup(void) {
   tft.setColorDepth(24);
 
   tft.fillRect(10,10,34,34, TFT_GREEN);
+  tft.fillScreen(TFT_DARKGREY);
+
 
 	if (!SD.begin(10)) {
     Serial.println("Error al montar la tarjeta SD");
@@ -100,25 +107,39 @@ void setup(void) {
     Serial.println("UNKNOWN");
   }
 
-	canvas.createSprite(800, 480);
-  canvas.fillRect(tX-17,ltY-17,34,34, TFT_RED);
+	canvas.createSprite(20, 20);
+  canvas.setPaletteColor(1, TFT_RED);
 }
-int xrec=0,yrec=0;
+
+
 void loop(){
+  // tft.fillScreen(TFT_BLACK);
+  currentTime = millis();
+  deltaTime=(currentTime - deltaTime)/1000;
+
   touched = tft.getTouch( &tX, &tY);
   if (touched) {
-    Serial.printf("%d,%d\n", tX, tY);
-
     if(ltX!=tX || ltY!=tY){
-      tft.fillRect(tX-17,ltY-17,34,34, TFT_TRANSPARENT);
-      tft.pushImage(tX-10,tY-10,20,20,bitmap_cursor);
+
+      canvas.fillRect(0, 0, 22, 22, TFT_RED);
+      canvas.pushImage(0, 0, 20, 20, bitmap_cursor);
+
+      Serial.printf("%d, %d, %d, %d, %d\n", deltaTime, tX, tY, ltX, ltY);
+
       ltX=tX;
       ltY=tY;
     }
   }
-  tft.fillRect(xrec,yrec,34,34, TFT_RED);
+  
+  canvas.pushSprite(ltX, ltY);
+  // canvas.fillScreen(TFT_BLACK);           // Limpia el canvas
+  // canvas.drawCircle(100, 100, 50, TFT_RED); // Dibuja un círculo rojo
+  // canvas.drawString("¡Hola, Aarón!", 120, 180); // Texto en pantalla
+  
+  // delay(10);
   xrec++;
   if(xrec>400){
     xrec=0;
   }
+  // deltaTime=currentTime;
 }
