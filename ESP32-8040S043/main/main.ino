@@ -28,7 +28,11 @@
 */
 #include <Arduino.h>
 #include <FS.h>
-#include <SD.h>
+// #include <SD.h>
+#include <SdFat.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SPITFT.h>
+#include <Adafruit_ImageReader.h>
 #include <LovyanGFX.hpp>
 #include <lgfx_user/LGFX_ESP32S3_RGB_ESP32-8048S043.h>
 #include "TAMC_GT911.h"
@@ -74,10 +78,15 @@ static LGFX_Sprite canvas(&tft);
 float cX=0, cY=0, cAcc=0.03, cVel=0;
 // float lcX=0, lcY=0;
 
+SdFat                SD;
+Adafruit_ImageReader reader(SD);
+ImageReturnCode stat;
+// Adafruit_Image img;
+// const uint16_t bgImage_cursor [] PROGMEM;
+
 // images/bliss.bmp - 24bit
 // images/arrow.png
 // images/fondo.jpg
-File bgImage;
 static LGFX_Sprite background(&tft);
 
 void setup(void) {
@@ -92,46 +101,33 @@ void setup(void) {
   tft.fillScreen(TFT_DARKGREY);
 
 
-	if (!SD.begin(10)) {
+	if (!SD.begin(10,SD_SCK_MHZ(25))) {
     Serial.println("Error al montar la tarjeta SD");
     // return;
   }
-	uint8_t cardType = SD.cardType();
-	  if(cardType == CARD_NONE){
-    Serial.println("No SD card attached");
-    return;
-  }
+  
+	// uint8_t cardType = SD.cardType();
+	//   if(cardType == CARD_NONE){
+  //   Serial.println("No SD card attached");
+  //   return;
+  // }
 
-  Serial.print("SD Card Type: ");
-  if(cardType == CARD_MMC){
-    Serial.println("MMC");
-  } else if(cardType == CARD_SD){
-    Serial.println("SDSC");
-  } else if(cardType == CARD_SDHC){
-    Serial.println("SDHC");
-  } else {
-    Serial.println("UNKNOWN");
-  }
+  // Serial.print("SD Card Type: ");
+  // if(cardType == CARD_MMC){
+  //   Serial.println("MMC");
+  // } else if(cardType == CARD_SD){
+  //   Serial.println("SDSC");
+  // } else if(cardType == CARD_SDHC){
+  //   Serial.println("SDHC");
+  // } else {
+  //   Serial.println("UNKNOWN");
+  // }
 
 	canvas.createSprite(20, 20);
-  canvas.setPaletteColor(1, TFT_RED);
-
-  if(SD.exists("/images/bliss.bmp")){
-    Serial.println("image found");
-    bgImage = SD.open("images/bliss.bmp",FILE_READ);
-    while (bgImage.available()) {
-      Serial.write(bgImage.read());
-    }
-    // close the file:
-    bgImage.close();
-  }else{
-    Serial.println("no image");
-  }
 }
 
 
 void loop(){
-  // tft.fillScreen(TFT_BLACK);
   currentTime = millis();
   deltaTime=(currentTime - deltaTime)/1000;
 
@@ -142,7 +138,7 @@ void loop(){
       canvas.pushImage(0, 0, 20, 20, bitmap_cursor);
 
       Serial.printf("%d, %d, %d, %d, %d\n", deltaTime, tX, tY, ltX, ltY);
-
+ 
       ltX=tX;
       ltY=tY;
     }
